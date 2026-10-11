@@ -1,0 +1,51 @@
+{
+  "kind": "grokbot-full-edit",
+  "version": 1,
+  "project": "My product demo - Grok Bot edit",
+  "output_name": "my-product-demo",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "vertical_size": [1080, 1920],
+  "vertical_tilt": 140,
+  "ask_user": true,
+  "ask_feedback_after_render": true,
+  "defaults": {
+    "title": "My product",
+    "subtitle": "The one-line promise goes here",
+    "look": "Clean",
+    "music_db": -8,
+    "pacing": "tight",
+    "vertical": true,
+    "transitions": "dip",
+    "notes": ""
+  },
+  "brand": {
+    "logo_16x9": "brand/logo_bug_16x9.png",
+    "logo_9x16": "brand/logo_bug_9x16.png",
+    "wordmark": "brand/wordmark.png",
+    "font": "Open Sans",
+    "font_style": "Bold",
+    "mono_font": "Menlo",
+    "text_rgb": [0.95, 0.97, 1.0],
+    "accent_rgb": [0.37, 0.92, 0.83],
+    "bg_rgb": [0.04, 0.07, 0.12],
+    "bg2_rgb": [0.06, 0.46, 0.43]
+  },
+  "music": "music/music.wav",
+  "music_align": "end",
+  "outro": {"title": "Subscribe for more tutorials", "subtitle": "Questions? Links are in the description."},
+  "endscreen": {"text": "example.com"},
+  "drx": null,
+  "sections": [
+    {"key": "setup", "clip": "raw/setup.mp4", "label": "01  SETUP", "chapter": "Setup",
+     "title": "Install and sign in", "command": "mytool init", "marker_color": "Green", "clip_color": "Green",
+     "tight": [1.0, 12.0], "relaxed": [0.5, 24.0], "keywords": ["setup", "install"], "punch_in": 1.0},
+    {"key": "feature", "clip": "raw/feature.mp4", "label": "02  FEATURE", "chapter": "Main feature",
+     "title": "The thing people came for", "command": "mytool run --fast", "marker_color": "Blue", "clip_color": "Blue",
+     "tight": [2.0, 14.0], "relaxed": [1.0, 30.0], "keywords": ["feature"], "punch_in": 1.08},
+    {"key": "result", "clip": "raw/result.mp4", "label": "03  RESULT", "chapter": "Result",
+     "title": "What you get at the end", "command": "", "marker_color": "Yellow", "clip_color": "Yellow",
+     "tight": [0.5, 10.0], "relaxed": [0.5, 20.0], "keywords": ["result"], "punch_in": 1.0}
+  ]
+}
