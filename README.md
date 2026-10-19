@@ -4,10 +4,6 @@
 
 **Open-source skills that teach [Grok Bot](https://grokbot.dev) real jobs: editing video in DaVinci Resolve, running a Discord server, tracking every routine.**
 
-[![Watch: Use GrokBot to Automate DaVinci Resolve](https://img.youtube.com/vi/hfUNIVahOMo/maxresdefault.jpg)](https://www.youtube.com/watch?v=hfUNIVahOMo&t=64s)
-
-▶ **[Watch: Use GrokBot to Automate DaVinci Resolve](https://www.youtube.com/watch?v=hfUNIVahOMo&t=64s)**
-
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Grok Bot](https://img.shields.io/badge/runs%20on-Grok%20Bot-black.svg)](https://grokbot.dev)
 [![GitHub stars](https://img.shields.io/github/stars/devrecated/grokbot-skills?style=social)](https://github.com/devrecated/grokbot-skills/stargazers)
