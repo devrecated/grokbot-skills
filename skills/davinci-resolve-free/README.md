@@ -1,5 +1,9 @@
 # davinci-resolve-free
 
+[![Watch: Use GrokBot to Automate DaVinci Resolve](https://img.youtube.com/vi/hfUNIVahOMo/maxresdefault.jpg)](https://www.youtube.com/watch?v=hfUNIVahOMo&t=64s)
+
+▶ **[Watch the walkthrough: Use GrokBot to Automate DaVinci Resolve](https://www.youtube.com/watch?v=hfUNIVahOMo&t=64s)**
+
 A Grok Bot skill: Grok Bot builds a complete edit **inside DaVinci Resolve (free)** with
 an in-app menu script, asks the user questions in a dialog inside Resolve, renders
 YouTube and vertical versions, and afterwards only reformats the export (Shorts/Reels

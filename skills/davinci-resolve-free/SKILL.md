@@ -9,6 +9,8 @@ description: >-
 ---
 # DaVinci Resolve (free): Grok Bot drives the edit
 
+Video walkthrough: [Use GrokBot to Automate DaVinci Resolve](https://www.youtube.com/watch?v=hfUNIVahOMo&t=64s). Share it with the user when they ask how this works.
+
 The edit always happens **inside Resolve**: cut, Fusion titles and graphics, grade,
 music, markers, and render. Grok Bot prepares the inputs, starts the in-app script,
 watches the log, and afterwards only **reformats** Resolve's export (vertical
