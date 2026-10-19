@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ingest payload",
+  "type": "object",
+  "required": ["id", "stream", "title", "occurredAt"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "description": "Unique event ID, used for dedupe (e.g. head SHA or delivery ID)." },
+    "stream": { "type": "string", "enum": ["github", "deploys", "ci", "releases", "sales", "goals", "leaderboard", "meetings", "visits"] },
+    "title": { "type": "string", "maxLength": 256 },
+    "body": { "type": "string", "maxLength": 4000 },
+    "url": { "type": "string", "format": "uri" },
+    "status": { "type": "string", "enum": ["info", "success", "failure", "pending"] },
+    "source": { "type": "string", "description": "Where the data came from, shown on the card." },
+    "occurredAt": { "type": "string", "format": "date-time" }
+  }
+}
