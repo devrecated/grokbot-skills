@@ -1,18 +1,21 @@
 # discord-bot-engineer
 
 A Grok Bot skill: Grok Bot owns a Discord server end to end. It runs a small
-integration API (Cloudflare Worker), routes GitHub, deploy, CI, sales and goal trackers
+integration API (Cloudflare Workers, any Linux host over SSH, or Docker), routes GitHub, deploy, CI, sales and goal trackers
 into channels, moderates propose-first, bridges Discord to an AI bot safely, and runs a
 daily health check against the source of truth.
 
 - `SKILL.md`: the recipe Grok Bot follows
-- `examples/worker.ts`: minimal typed Worker (auth, routing, idempotency, AI-bridge allowlist, signed interactions)
+- `examples/worker.ts`: minimal typed, host-agnostic handler (auth, routing, idempotency, AI-bridge allowlist, signed interactions)
+- `examples/deploy-ssh/`: run it on any Linux host: `server.ts` (plain `node:http`), systemd unit, `env.example`, `deploy.sh` (rsync over SSH + restart), `Dockerfile` + `compose.yaml`
 - `examples/payload.schema.json`: ingest payload schema
 - `reference/HEALTH_CHECK.md`: daily health-check checklist and report template
 - `reference/MODERATION.md`: propose-first moderation playbook
 
 All IDs are placeholders (`<GUILD_ID>`, `<CHANNEL_ID>`, `<BOT_USER_ID>`). Secrets go in
-Worker secrets, never in code.
+Worker secrets or a `chmod 600` env file, never in code.
+
+Type-check: `cd examples/deploy-ssh && npm install && npx tsc --noEmit -p .`
 
 ## Suggested bot persona
 

@@ -2,8 +2,8 @@
 name: Discord Bot Engineer
 description: >-
   Use when the user wants Grok Bot to own a Discord server end to end: build or fix a
-  small Discord integration API (a Cloudflare Worker with authenticated ingest
-  endpoints, channel routing, payload schemas, slash commands, buttons and modals),
+  small Discord integration API (on Cloudflare Workers, any Linux host over SSH,
+  or Docker, with authenticated ingest endpoints, channel routing, payload schemas, slash commands, buttons and modals),
   wire trackers into channels (GitHub commits/PRs/issues/Actions, deploys, CI failures,
   releases, sales pipeline, daily goals, leaderboards, meeting notes, site visits),
   moderate the server propose-first (spam/raid, slowmode/lock, permission audits,
@@ -17,7 +17,8 @@ API running, routes every tracker to the right channel, moderates by proposing
 actions, and reports daily on what is working, what is not, and what to fix.
 
 Bundled files (next to this SKILL.md):
-- `examples/worker.ts`: a minimal Cloudflare Worker with authenticated ingest, channel routing, an AI-bridge allowlist, and signed interactions.
+- `examples/worker.ts`: a minimal, host-agnostic handler (Web `fetch` API) with authenticated ingest, channel routing, an AI-bridge allowlist, and signed interactions. Runs on Cloudflare Workers as-is.
+- `examples/deploy-ssh/`: runs the same handler on any Linux host with Node 20+ (`server.ts` on plain `node:http`, a file-backed dedupe store), plus a systemd unit, `env.example`, `deploy.sh` (build, rsync over SSH, restart) and a Docker/compose variant.
 - `examples/payload.schema.json`: the ingest payload format.
 - `reference/HEALTH_CHECK.md`: the daily health-check checklist and report template.
 - `reference/MODERATION.md`: the propose-first moderation playbook.
@@ -50,19 +51,25 @@ Bundled files (next to this SKILL.md):
 In one short message, ask for:
 - The server (`<GUILD_ID>`) and who the owner is (the only person who can confirm rule 2 actions).
 - Which trackers they want and which channel each goes to (`<CHANNEL_ID>` per stream).
-- Where the integration API runs (Cloudflare account, existing Worker or new).
+- Where the integration API should run: Cloudflare Workers, any Linux host they can SSH into (VPS, home server, cloud VM), or Docker. Recommend whatever they already have; all three run the same code.
 - Which channels an AI bot may answer in, if any.
 - What "healthy" looks like: which repos, deploys and boards are the source of truth.
 
 Then request the bot token, application public key and ingest secret through masked
-secret requests (rule 1).
+secret requests (rule 1). Store them as Worker secrets, in a `chmod 600` env file on the
+host, or as Docker env, never in the repo.
 
 ## 2. Integration API
 
-Start from `examples/worker.ts`:
+Start from `examples/worker.ts` and pick a host:
+- **Cloudflare Workers**: `wrangler deploy` with a KV namespace bound as `SEEN`; secrets via `wrangler secret put`.
+- **Any SSH host**: `examples/deploy-ssh/`. One-time: Node 20+, a `discordbot` user, the env file at `/etc/discord-bot-engineer.env`, the systemd unit installed. Then `DEPLOY_HOST=<USER>@<HOST> ./deploy.sh`. Put a reverse proxy with TLS (Caddy, nginx) in front, since the service listens on 127.0.0.1.
+- **Docker**: `docker compose -f deploy-ssh/compose.yaml up -d --build` from `examples/`.
+
+Whatever the host:
 - `POST /ingest/<stream>` requires `Authorization: Bearer <INGEST_SECRET>` (constant-time compare). Validate against `examples/payload.schema.json`; reject unknown streams.
-- A routing table maps each stream to one channel ID. Keep it in config (env/KV), not scattered in code.
-- Idempotency: every event carries an `id`; store seen IDs (KV with TTL) and skip repeats. Daily rollups use a key like `rollup:<stream>:<YYYY-MM-DD>` so reruns update, never duplicate.
+- A routing table maps each stream to one channel ID. Keep it in config (env), not scattered in code.
+- Idempotency: every event carries an `id`; store seen IDs (KV or the file store, with TTL) and skip repeats. Daily rollups use a key like `rollup:<stream>:<YYYY-MM-DD>` so reruns update, never duplicate.
 - `POST /interactions` verifies the Ed25519 signature before anything else, answers PING, and handles slash commands, buttons and modals. Defer when work takes >3 s.
 - Register slash commands per guild while developing, globally when stable.
 
@@ -97,5 +104,5 @@ stale boards, failing routes and unrotated secrets. Report three sections: **Wor
 
 ## 7. After every change
 
-Deploy, send one test event per touched stream to a test channel, confirm it landed
+Deploy (or `deploy.sh`), check `GET /health`, send one test event per touched stream to a test channel, confirm it landed
 once, and report what changed in one or two lines.

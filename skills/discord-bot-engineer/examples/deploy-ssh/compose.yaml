@@ -1,0 +1,18 @@
+# Docker variant. Build context is examples/ so worker.ts is included:
+#   docker compose -f deploy-ssh/compose.yaml up -d --build
+services:
+  discord-bot-engineer:
+    build:
+      context: ..
+      dockerfile: deploy-ssh/Dockerfile
+    env_file: /etc/discord-bot-engineer.env
+    environment:
+      KV_FILE: /data/seen.json
+      HOST: 0.0.0.0
+    ports:
+      - "127.0.0.1:8787:8787"
+    volumes:
+      - seen:/data
+    restart: unless-stopped
+volumes:
+  seen:
