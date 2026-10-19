@@ -1,0 +1,21 @@
+[Unit]
+Description=Discord Bot Engineer integration API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=discordbot
+WorkingDirectory=/opt/discord-bot-engineer
+EnvironmentFile=/etc/discord-bot-engineer.env
+ExecStart=/usr/bin/node dist/deploy-ssh/server.js
+Restart=on-failure
+RestartSec=5
+StateDirectory=discord-bot-engineer
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -8,7 +8,7 @@ permission and for your input along the way.
 | Skill | What it does |
 |---|---|
 | [`davinci-resolve-free`](skills/davinci-resolve-free/) | Grok Bot builds a full edit inside DaVinci Resolve (free): Fusion titles, lower thirds, grades, music, markers, YouTube and vertical renders. It asks you questions in a dialog inside Resolve, and afterwards only reformats the export for Shorts/Reels and thumbnails. |
-| [`discord-bot-engineer`](skills/discord-bot-engineer/) | Grok Bot owns your Discord server: a small integration API (Cloudflare Worker), GitHub/deploy/CI/sales trackers routed to channels, propose-first moderation, a safe AI-bot bridge, and a daily health check against the source of truth. |
+| [`discord-bot-engineer`](skills/discord-bot-engineer/) | Grok Bot owns your Discord server: a small integration API (Cloudflare Workers, any SSH host, or Docker), GitHub/deploy/CI/sales trackers routed to channels, propose-first moderation, a safe AI-bot bridge, and a daily health check against the source of truth. |
 
 ## Add a skill to Grok Bot
 

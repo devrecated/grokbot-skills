@@ -1,4 +1,5 @@
-// Minimal Discord integration Worker. Placeholders only; configure via env/secrets.
+// Minimal Discord integration API. Runs on Cloudflare Workers as-is, or on Node via deploy-ssh/server.ts.
+// Placeholders only; configure via env/secrets.
 // Secrets: DISCORD_BOT_TOKEN, DISCORD_PUBLIC_KEY, INGEST_SECRET (wrangler secret put ...)
 export interface Env {
   DISCORD_BOT_TOKEN: string;
@@ -7,7 +8,14 @@ export interface Env {
   ROUTES: string;            // JSON: {"github":"<CHANNEL_ID>","ci":"<CHANNEL_ID>",...}
   AI_ALLOWED_CHANNELS: string; // JSON: ["<CHANNEL_ID>"]
   BOT_USER_ID: string;       // <BOT_USER_ID>
-  SEEN: KVNamespace;         // idempotency store
+  GATEWAY_HEALTH_URL: string; // https://<GATEWAY_HOST>/health
+  SEEN: KVLike;              // idempotency store (Cloudflare KV, or a file store on Node)
+}
+
+/** The subset of Cloudflare KV this example uses, so the same code runs on Node. */
+export interface KVLike {
+  get(key: string): Promise<string | null>;
+  put(key: string, value: string, opts?: { expirationTtl?: number }): Promise<void>;
 }
 
 type Stream = "github" | "deploys" | "ci" | "releases" | "sales" | "goals" | "leaderboard" | "meetings" | "visits";
@@ -65,8 +73,10 @@ async function ingest(req: Request, env: Env): Promise<Response> {
   return json({ ok: true });
 }
 
-function hexToBytes(hex: string): Uint8Array {
-  return new Uint8Array((hex.match(/.{2}/g) ?? []).map((h) => parseInt(h, 16)));
+function hexToBytes(hex: string): Uint8Array<ArrayBuffer> {
+  const out = new Uint8Array(new ArrayBuffer(hex.length / 2));
+  for (let i = 0; i < out.length; i++) out[i] = parseInt(hex.slice(i * 2, i * 2 + 2), 16);
+  return out;
 }
 
 async function verifyDiscord(req: Request, env: Env, raw: string): Promise<boolean> {
@@ -84,13 +94,13 @@ async function interactions(req: Request, env: Env): Promise<Response> {
   if (i.type === 1) return json({ type: 1 }); // PING
   if (i.type === 2 && i.data?.name === "status") {
     // Dependent command: fail gracefully instead of erroring.
-    const up = await fetch("https://<GATEWAY_HOST>/health").then((r) => r.ok).catch(() => false);
+    const up = await fetch(env.GATEWAY_HEALTH_URL).then((r) => r.ok).catch(() => false);
     return json({ type: 4, data: { content: up ? "gateway online" : "gateway offline, try again later", flags: 64 } });
   }
   return json({ type: 4, data: { content: "unknown command", flags: 64 } });
 }
 
-export default {
+export const app = {
   async fetch(req: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(req.url);
     if (req.method === "POST" && pathname.startsWith("/ingest")) return ingest(req, env);
@@ -99,3 +109,5 @@ export default {
     return json({ error: "not found" }, 404);
   },
 };
+
+export default app;
